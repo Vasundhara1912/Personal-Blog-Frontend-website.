@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bloggg-Let's Gossip</title>
+<style>
+body {
+  margin: 0;
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: radial-gradient(circle at center, #a020f0, #5a00a3, #2a0052, #0d001a);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  padding: 2rem 0; /* Allow natural scrolling + spacing */
+}
+
+/* ===== AUTH PAGES ===== */
+.auth-container {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  width: 90%;
+  max-width: 400px;
+  background: rgba(0,0,0,0.7);
+  padding: 2rem;
+  border-radius: 15px;
+  box-shadow: 0 0 15px #000;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10; /* Ensure it appears above content */
+}
+.auth-container h2 {
+  margin-bottom: 1rem;
+  text-shadow: 0 0 10px black;
+}
+.auth-container input {
+  width: 100%;
+  padding: 0.8rem;
+  margin: 0.5rem 0;
+  border-radius: 8px;
+  border: none;
+}
+.auth-container button {
+  width: 100%;
+  padding: 0.8rem;
+  margin-top: 0.8rem;
+  border-radius: 8px;
+  border: none;
+  background: #2a0052;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.auth-container button:hover { background: #5a00a3; }
+.auth-container p {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+}
+.auth-container a {
+  color: #ffb6f9;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/* ===== DASHBOARD ===== */
+#dashboard {
+  display: none;
+  width: 90%;
+  max-width: 1000px;
+  background: rgba(0,0,0,0.7);
+  border-radius: 15px;
+  box-shadow: 0 0 15px #000;
+  padding: 2rem;
+  margin-bottom: 3rem;
+}
+
+/* Header */
+header {
+  width: 100%;
+  text-align: center;
+  padding: 2rem 1rem 1rem;
+  /* Optional sticky header - uncomment below if desired */
+  /*
+  background: rgba(0,0,0,0.7);
+  border-radius: 15px 15px 0 0;
+  margin: -2rem -2rem 2rem -2rem;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+  */
+}
+header h1 { font-size: 2.5rem; text-shadow: 0 0 10px black; margin-bottom: 0.5rem; }
+header p { font-size: 1.2rem; }
+
+/* Blog Form */
+#blog-form {
+  display: flex;
+  flex-direction: column;
+  width: 90%;
+  max-width: 700px;
+  background: rgba(0,0,0,0.6);
+  padding: 1rem 2rem;
+  border-radius: 15px;
+  margin: 1rem auto 2rem;
+  box-shadow: 0 0 15px #000;
+}
+#blog-form input, #blog-form textarea {
+  padding: 0.8rem;
+  margin: 0.5rem 0;
+  border-radius: 8px;
+  border: none;
+  font-size: 1rem;
+}
+#blog-form button {
+  margin-top: 0.5rem;
+  padding: 0.7rem;
+  border-radius: 8px;
+  border: none;
+  background: #4a216f;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: 0.3s;
+}
+#blog-form button:hover { background: #5a00a3; }
+
+/* Posts */
+#posts {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 90%;
+  max-width: 900px;
+  margin: auto;
+}
+.post {
+  width: 100%;
+  background: rgba(0,0,0,0.6);
+  border-radius: 15px;
+  padding: 1rem 1.5rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 0 10px #000;
+}
+.post h3 { color: #ffb6f9; margin-top: 0; }
+.post p { margin: 0.3rem 0; }
+.buttons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.5rem;
+  flex-wrap: wrap;
+}
+button.like-btn, button.comment-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  background: #2a0052;
+  color: white;
+  transition: 0.3s;
+}
+button.like-btn:hover, button.comment-btn:hover { background: #5a00a3; }
+.comments-section {
+  display: none;
+  margin-top: 0.5rem;
+  border-top: 1px solid #fff3;
+  padding-top: 0.5rem;
+}
+.comments-section input {
+  width: 70%;
+  margin-right: 0.5rem;
+  padding: 0.4rem;
+  border-radius: 6px;
+  border: none;
+}
+.comments-list {
+  list-style: none;
+  padding-left: 0;
+  margin-top: 0.5rem;
+}
+.comments-list li {
+  background: rgba(255,255,255,0.1);
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+  margin-top: 0.3rem;
+}
+
+/* Fixed Logout Button */
+.logout-btn {
+  position: fixed;
+  right: 20px;
+  top: 20px;
+  padding: 0.5rem 1rem;
+  background: #2a0052;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: 0.3s;
+  z-index: 100;
+}
+.logout-btn:hover { background: #5a00a3; }
+</style>
+</head>
+<body>
+
+<!-- ===== SIGNUP PAGE ===== -->
+<div id="signupPage" class="auth-container">
+  <h2>Create Account</h2>
+  <input type="text" id="signupUser" placeholder="Username" required>
+  <input type="password" id="signupPass" placeholder="Password" required>
+  <input type="password" id="signupConfirm" placeholder="Confirm Password" required>
+  <button onclick="signup()">Sign Up</button>
+  <p>Already have an account? <a onclick="showLogin()">Login</a></p>
+</div>
+
+<!-- ===== LOGIN PAGE ===== -->
+<div id="loginPage" class="auth-container">
+  <h2>Login</h2>
+  <input type="text" id="loginUser" placeholder="Username" required>
+  <input type="password" id="loginPass" placeholder="Password" required>
+  <button onclick="login()">Login</button>
+  <p>Don’t have an account? <a onclick="showSignup()">Sign Up</a></p>
+</div>
+
+<!-- ===== DASHBOARD ===== -->
+<div id="dashboard">
+  <header>
+    <h1>Let's Gossip?</h1>
+    <p>Write your thoughts and share with the world!!</p>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </header>
+
+  <section id="blog-form">
+    <input type="text" id="title" placeholder="Enter blog title..." required>
+    <textarea id="content" placeholder="Write your blog content..." required></textarea>
+    <button onclick="addPost()">➕ Post Blog</button>
+  </section>
+
+  <main id="posts"></main>
+</div>
+
+<script>
+/* ===== AUTH SYSTEM ===== */
+function showSignup(){
+  document.getElementById("signupPage").style.display="flex";
+  document.getElementById("loginPage").style.display="none";
+  document.getElementById("dashboard").style.display="none";
+}
+function showLogin(){
+  document.getElementById("signupPage").style.display="none";
+  document.getElementById("loginPage").style.display="flex";
+  document.getElementById("dashboard").style.display="none";
+}
+function showDashboard(){
+  document.getElementById("signupPage").style.display="none";
+  document.getElementById("loginPage").style.display="none";
+  document.getElementById("dashboard").style.display="block";
+  renderPosts();
+}
+
+function signup(){
+  const user=document.getElementById("signupUser").value.trim();
+  const pass=document.getElementById("signupPass").value.trim();
+  const confirm=document.getElementById("signupConfirm").value.trim();
+  if(!user||!pass||!confirm){alert("Fill all fields");return;}
+  if(pass!==confirm){alert("Passwords don’t match");return;}
+  let users=JSON.parse(localStorage.getItem("users"))||[];
+  if(users.find(u=>u.username===user)){alert("User already exists");return;}
+  users.push({username:user,password:pass});
+  localStorage.setItem("users",JSON.stringify(users));
+  alert("Signup successful! Please login.");
+  showLogin();
+}
+
+function login(){
+  const user=document.getElementById("loginUser").value.trim();
+  const pass=document.getElementById("loginPass").value.trim();
+  let users=JSON.parse(localStorage.getItem("users"))||[];
+  let valid=users.find(u=>u.username===user && u.password===pass);
+  if(!valid){alert("Invalid credentials");return;}
+  localStorage.setItem("currentUser",user);
+  showDashboard();
+}
+
+function logout(){
+  localStorage.removeItem("currentUser");
+  showLogin();
+}
+
+/* ===== BLOG SYSTEM ===== */
+function addPost(title=null,content=null){
+  if(!title) title=document.getElementById("title").value.trim();
+  if(!content) content=document.getElementById("content").value.trim();
+  if(!title||!content){alert("Fill all fields!"); return;}
+  const currentUser=localStorage.getItem("currentUser");
+  let posts=JSON.parse(localStorage.getItem("posts"))||[];
+  const post={id:Date.now(),title,content,author:currentUser,likes:0,likedBy:[],comments:[]};
+  posts.unshift(post);
+  localStorage.setItem("posts",JSON.stringify(posts));
+  renderPosts();
+  document.getElementById("title").value="";
+  document.getElementById("content").value="";
+}
+
+function renderPosts(){
+  const postsContainer=document.getElementById("posts");
+  postsContainer.innerHTML="";
+  const currentUser=localStorage.getItem("currentUser");
+  const posts=JSON.parse(localStorage.getItem("posts"))||[];
+  posts.forEach(post=>{
+    const postDiv=document.createElement("div");
+    postDiv.classList.add("post");
+    const liked=post.likedBy.includes(currentUser)?"❤️":"🤍";
+    postDiv.innerHTML=`
+      <h3>${post.title}</h3>
+      <p>${post.content}</p>
+      <p><strong>Author:</strong> ${post.author}</p>
+      <div class="buttons">
+        <button class="like-btn" onclick="likePost(${post.id})">${liked} Like (${post.likes})</button>
+        <button class="comment-btn" onclick="toggleCommentBox(this)">💬 Comment</button>
+        <div class="comments-section">
+          <input type="text" placeholder="Write a comment..." class="comment-input">
+          <button onclick="addComment(${post.id},this)">➕ Add Comment</button>
+          <ul class="comments-list"></ul>
+        </div>
+      </div>
+    `;
+    postsContainer.appendChild(postDiv);
+    const commentsList=postDiv.querySelector(".comments-list");
+    post.comments.forEach(c=>{
+      const li=document.createElement("li");
+      li.innerText=`${c.user}: ${c.text}`;
+      commentsList.appendChild(li);
+    });
+  });
+}
+
+function likePost(postId){
+  const currentUser=localStorage.getItem("currentUser");
+  let posts=JSON.parse(localStorage.getItem("posts"))||[];
+  const post=posts.find(p=>p.id===postId);
+  if(!post) return;
+  if(post.likedBy.includes(currentUser)) {
+    alert("You already liked this post!");
+    return;
+  }
+  post.likes++;
+  post.likedBy.push(currentUser);
+  localStorage.setItem("posts",JSON.stringify(posts));
+  renderPosts();
+}
+
+function toggleCommentBox(button){
+  const section=button.closest(".post").querySelector(".comments-section");
+  section.style.display=section.style.display==="none"?"block":"none";
+}
+
+function addComment(postId,button){
+  const input=button.closest(".comments-section").querySelector(".comment-input");
+  const text=input.value.trim();
+  if(!text) {
+    alert("Comment cannot be empty!");
+    return;
+  }
+  const currentUser=localStorage.getItem("currentUser");
+  let posts=JSON.parse(localStorage.getItem("posts"))||[];
+  const post=posts.find(p=>p.id===postId);
+  if(!post) return;
+  post.comments.push({user:currentUser,text});
+  localStorage.setItem("posts",JSON.stringify(posts));
+  renderPosts();
+  input.value = ""; // Clear input after posting
+}
+
+/* ===== INIT ===== */
+window.onload=function(){
+  if(localStorage.getItem("currentUser")){
+    showDashboard();
+  } else {
+    showSignup();
+  }
+};
+</script>
+
+</body>
+</html>
